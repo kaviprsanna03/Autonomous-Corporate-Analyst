@@ -1,0 +1,13 @@
+# Python spaces
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# AI & Database files
+chroma_db/
+data/
+*.pdf
+
+# Environment variables
+.env
