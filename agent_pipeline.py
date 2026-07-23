@@ -63,7 +63,7 @@ if __name__ == "__main__":
     print("\n--- 📝 ROUTER OUTPUT (Updated Tasks) ---")
     print(updated_state)
 
-    from langchain_community.document_loaders import PyPDFLoader
+from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_chroma import Chroma
 from langchain_ollama import OllamaEmbeddings
@@ -123,3 +123,33 @@ def rag_node(state: GraphState):
         
     # Update the shared state notebook
     return {"retrieved_docs": retrieved_data}
+# --- MAIN TEST BLOCK ---
+if __name__ == "__main__":
+    print("🚀 Script Starting...")
+    
+    # PDF File Path - Unga pdf name ku yetha madhiri ithai maathikonga
+    pdf_file_path = "data/sample_report.pdf" 
+    
+    # ⚠️ IMPORTANT: First time run panrapa mattum intha keezha irukka line uncommented ah irukkanum.
+    # Database create aanathum, intha line-ku munnadi oru '#' pottu comment pannidunga.
+    setup_vector_database(pdf_file_path)
+    
+    # Namma dummy state
+    test_state = {
+        "user_query": "Analyze Tesla's Q3 performance focusing on supply chain and net profit",
+        "sub_tasks": [],
+        "retrieved_docs": []
+    }
+    
+    print("\n⏳ 1. Passing to Router...")
+    state_after_router = router_node(test_state)
+    
+    print("\n⏳ 2. Passing to RAG Specialist...")
+    # Router output-ah RAG node-ku pass panrom
+    state_after_rag = rag_node(state_after_router)
+    
+    print("\n--- 📝 RAG OUTPUT (Retrieved Documents) ---")
+    for i, doc in enumerate(state_after_rag.get("retrieved_docs", [])):
+        print(f"\nDocument {i+1}:")
+        print(f"Source: {doc.source_file}")
+        print(f"Content snippet: {doc.content[:300]}...\n")
